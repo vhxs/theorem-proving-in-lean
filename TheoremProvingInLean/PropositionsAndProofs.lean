@@ -54,5 +54,3 @@ Iff.intro
           (fun hr : r => Or.intro_right (p ∨ q) hr)
       )
   )
-
-example : p ↔ p := p
