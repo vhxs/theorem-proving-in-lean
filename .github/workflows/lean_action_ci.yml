@@ -12,3 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: leanprover/lean-action@v1
+
+      - name: Install project dependencies
+        run: lake update
+
+      - name: Build the project
+        run: lake build
