@@ -65,3 +65,20 @@ Iff.intro
     Or.elim h
       (fun ⟨hp, hq⟩ => ⟨hp, Or.intro_left _ hq⟩)
       (fun ⟨hp, hr⟩ => ⟨hp, Or.intro_right _ hr⟩))
+
+example: p ∨ (q ∧ r) ↔ (p ∨ q) ∧ (p ∨ r) :=
+Iff.intro
+  (fun hpqr =>
+    Or.elim hpqr
+      (fun hp => And.intro (Or.intro_left q hp) (Or.intro_left r hp))
+      (fun hqr => And.intro (Or.intro_right p (And.left hqr)) (Or.intro_right p (And.right hqr)))
+  )
+  (fun ⟨hpq, hpr⟩ =>
+    Or.elim hpq
+      (fun hp => Or.intro_left (q ∧ r) hp)
+      (fun hq =>
+        Or.elim hpr
+          (fun hp => Or.inl hp)
+          (fun hr => Or.inr (And.intro hq hr))
+      )
+  )
