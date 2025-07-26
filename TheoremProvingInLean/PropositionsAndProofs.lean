@@ -82,3 +82,32 @@ Iff.intro
           (fun hr => Or.inr (And.intro hq hr))
       )
   )
+
+example: (p → (q → r)) ↔ (p ∧ q → r) :=
+Iff.intro
+  (fun hpqr: (p → (q → r)) =>
+    (fun hpq: p ∧ q => hpqr (And.left hpq) (And.right hpq))
+  )
+  (fun h: p ∧ q → r =>
+    (fun p =>
+      (fun q =>
+        (h (And.intro p q))
+      )
+    )
+  )
+
+
+example: ((p ∨ q) → r) ↔ (p → r) ∧ (q → r) :=
+Iff.intro
+  (fun hpqr: (p ∨ q) → r =>
+    And.intro
+      (fun hp: p => hpqr (Or.intro_left q hp))
+      (fun hq: q => hpqr (Or.intro_right p hq))
+  )
+  (fun h: (p → r) ∧ (q → r) =>
+    (fun hpq: p ∨ q =>
+      Or.elim hpq
+        (fun hp: p => (And.left h) hp)
+        (fun hq: q => (And.right h) hq)
+    )
+  )
