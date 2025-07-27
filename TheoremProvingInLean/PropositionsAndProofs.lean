@@ -1,6 +1,7 @@
 -- Chapter 3 exercises
--- (TODO) restructure this into one file per chapter
 -- https://leanprover.github.io/theorem_proving_in_lean4/Propositions-and-Proofs/#Theorem-Proving-in-Lean-4--Propositions-and-Proofs--Exercises
+
+open Classical
 
 variable (p q r : Prop)
 
@@ -184,3 +185,61 @@ example : (p → q) → (¬q → ¬p) :=
     )
   )
 )
+
+example : (p → q ∨ r) → ((p → q) ∨ (p → r)) :=
+  fun h : p → q ∨ r =>
+    Or.elim (em p)
+      (fun hp : p =>
+        Or.elim (h hp)
+          (fun hq : q => Or.inl (fun _ => hq))
+          (fun hr : r => Or.inr (fun _ => hr)))
+      (fun hnp : ¬p =>
+        Or.inl (fun hp => False.elim (hnp hp)))
+
+example : ¬(p ∧ q) → ¬p ∨ ¬q :=
+  (fun hnpq : ¬(p ∧ q) =>
+    Or.elim (em p)
+      (fun hp: p => Or.intro_right (¬p) (fun hq: q => hnpq (And.intro hp hq)))
+      (fun hnp: ¬p => Or.intro_left (¬q) hnp)
+  )
+
+example : ¬(p → q) → p ∧ ¬q :=
+  (fun hnpiq: ¬(p → q) =>
+    Or.elim (em p)
+      (fun hp: p =>
+        Or.elim (em q)
+          (fun hq: q => False.elim (hnpiq (fun _ => hq)))
+          (fun hnq: ¬q => And.intro hp hnq)
+      )
+      (fun hnp: ¬p =>
+        False.elim (hnpiq (fun hp => False.elim (hnp hp)))
+      )
+  )
+
+example : (p → q) → (¬p ∨ q) :=
+ (fun hpq: p → q =>
+  Or.elim (em p)
+    (fun hp: p => Or.intro_right (¬p) (hpq hp))
+    (fun hnp: ¬p => Or.intro_left q hnp)
+ )
+
+example : (¬q → ¬p) → (p → q) :=
+  (fun hnqnp: ¬q → ¬p =>
+    (fun hp: p =>
+      Or.elim (em q)
+        (fun hq: q => hq)
+        (fun hnq: ¬q => False.elim (hnqnp hnq hp))
+    )
+  )
+
+example : p ∨ ¬p :=
+  Or.elim (em p)
+    (fun hp: p => Or.inl hp)
+    (fun hnp: ¬p => Or.inr hnp)
+
+example : ((p → q) → p) → p :=
+  (fun hpqp : (p → q) → p =>
+    Or.elim (em p)
+      (fun hp: p => hp)
+      (fun hnp: ¬p => hpqp (fun hp => False.elim (hnp hp)))
+  )
