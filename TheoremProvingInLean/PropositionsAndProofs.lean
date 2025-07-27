@@ -111,3 +111,76 @@ Iff.intro
         (fun hq: q => (And.right h) hq)
     )
   )
+
+example: ¬(p ∨ q) ↔ ¬p ∧ ¬q :=
+Iff.intro
+  (fun hnpq: ¬(p ∨ q) =>
+    And.intro (fun hp: p => hnpq (Or.inl hp)) (fun hq: q => hnpq (Or.inr hq))
+  )
+  (fun ⟨ hnp, hnq ⟩ =>
+    (fun hpq: p ∨ q =>
+      Or.elim hpq
+        (fun hp: p => hnp hp)
+        (fun hq: q => hnq hq)
+    )
+  )
+
+example: ¬p ∨ ¬q → ¬(p ∧ q) :=
+(fun hnpnq: ¬p ∨ ¬q =>
+  fun hpq: p ∧ q =>
+    Or.elim hnpnq
+      (fun hnp: ¬p => hnp (And.left hpq))
+      (fun hnq: ¬q => hnq (And.right hpq))
+)
+
+example: ¬(p ∧ ¬p) :=
+(fun hpnp: p ∧ ¬p =>
+  let hp := And.left hpnp
+  let hnp := And.right hpnp
+  hnp hp
+)
+
+example : p ∧ ¬q → ¬(p → q) :=
+(fun hpnq: p ∧ ¬q =>
+  fun hpiq: p → q =>
+    (And.right hpnq) (hpiq (And.left hpnq))
+)
+
+example : ¬p → (p → q) :=
+(fun hnp: ¬p =>
+  (fun hp: p =>
+    False.elim (hnp hp)
+  )
+)
+
+example : (¬p ∨ q) → (p → q) :=
+(fun hnpq : ¬p ∨ q =>
+  (fun hp: p =>
+    Or.elim hnpq
+      (fun hnp: ¬p => False.elim (hnp hp))
+      (fun hq: q => hq)
+  )
+)
+
+example : p ∨ False ↔ p :=
+Iff.intro
+  (fun hpf: p ∨ False =>
+    Or.elim hpf
+      (fun hp: p => hp)
+      (fun hf: False => False.elim hf)
+  )
+  (fun hp: p => Or.inl hp)
+
+example : p ∧ False ↔ False :=
+Iff.intro
+  (fun hpf: p ∧ False => And.right hpf)
+  (fun hf: False => False.elim hf)
+
+example : (p → q) → (¬q → ¬p) :=
+(fun hpiq: p → q =>
+  (fun hnq: ¬q =>
+    (fun hp: p =>
+      hnq (hpiq hp)
+    )
+  )
+)
