@@ -13,3 +13,12 @@ Iff.intro
   (fun ⟨ haxpx, haxqx ⟩ =>
     (fun x => And.intro (haxpx x) (haxqx x))
   )
+
+example : (∀ x, p x → q x) → (∀ x, p x) → (∀ x, q x) :=
+  (fun hapxqx =>
+    (fun haxpx =>
+      (fun hx =>
+        (hapxqx hx) (haxpx hx)
+      )
+    )
+  )
